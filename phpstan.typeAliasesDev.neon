@@ -1,0 +1,9 @@
+parameters:
+    typeAliases:
+        devRoboDownloadCurlPhpExecutable: '''
+            array{
+                available: bool,
+                envVar: array<string, string>,
+                command: string,
+            }
+        '''

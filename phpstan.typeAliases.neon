@@ -1,0 +1,21 @@
+parameters:
+    typeAliases:
+        taskDownloadCurlOptions: '''
+            array{
+                uri?: string,
+                destination?: null|resource|string,
+                hashOptions?: roboDownloadCurlHashOptions,
+                hashChecksum?: string,
+                curlOptions?: array<int, mixed>,
+                skipDownloadIf?: roboDownloadCurlSkipDownloadIfEnum,
+            }
+        '''
+        roboDownloadCurlHashOptions: '''
+            array{
+                checksum?: string,
+                hashAlgorithm?: string,
+            }
+        '''
+        roboDownloadCurlSkipDownloadIfEnum: '''
+            "never"|"exists"|"checksumMatches"
+        '''

@@ -31,7 +31,7 @@ abstract class TaskTestBase extends Unit
     protected UnitTester $tester;
 
     /**
-     * @var \Sweetchuck\Robo\DownloadCurl\Task\DownloadTask
+     * @var \Sweetchuck\Robo\DownloadCurl\Task\DownloadTask|\Robo\Collection\CollectionBuilder
      */
     protected $task;
 
@@ -43,7 +43,7 @@ abstract class TaskTestBase extends Unit
     }
 
     /**
-     * @inheritdoc
+     * @return void
      */
     public function _before()
     {
@@ -64,7 +64,7 @@ abstract class TaskTestBase extends Unit
         $this->container->add('container', $this->container);
 
         Robo::configureContainer($this->container, $application, $this->config, $input, $output);
-        $this->container->share('logger', BufferingLogger::class);
+        $this->container->addShared('logger', BufferingLogger::class);
 
         $this->builder = CollectionBuilder::create($this->container, null);
         $this->taskBuilder = new DummyTaskBuilder();

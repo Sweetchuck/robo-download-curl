@@ -20,11 +20,11 @@ class DownloadTaskTest extends TaskTestBase
         return $this;
     }
 
-    public function testRunSuccess()
+    public function testRunSuccess(): void
     {
         $options = [
             'uri' => 'file://' . codecept_data_dir() . '/dummy.txt',
-            'destination' => tempnam(sys_get_temp_dir(), 'robo-download-curl-'),
+            'destination' => (string) tempnam(sys_get_temp_dir(), 'robo-download-curl-'),
         ];
 
         $this->task->setOptions($options);

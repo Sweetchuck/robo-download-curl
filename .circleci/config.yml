@@ -125,16 +125,11 @@ jobs:
             - 'checkout'
             - 'composer_install'
             - 'lint'
-    test_php_min:
-        executor: 'php_min'
-        working_directory: '~/repo'
-        steps:
-            - 'pecl_install_pcov'
-            - 'checkout'
-            - 'composer_install'
-            - 'test'
-    test_php_plus1:
-        executor: 'php_plus1'
+    test:
+        parameters:
+            executor:
+                type: 'string'
+        executor: '<<parameters.executor>>'
         working_directory: '~/repo'
         steps:
             - 'pecl_install_pcov'
@@ -152,10 +147,12 @@ workflows:
                     requires:
                         - 'build'
             -
-                test_php_min:
+                test:
+                    name: 'test_<<matrix.executor>>'
                     requires:
                         - 'build'
-            -
-                test_php_plus1:
-                    requires:
-                        - 'build'
+                    matrix:
+                        parameters:
+                            executor:
+                                - 'php_min'
+                                - 'php_plus1'

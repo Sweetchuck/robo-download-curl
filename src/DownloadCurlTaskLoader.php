@@ -10,6 +10,9 @@ use Sweetchuck\Robo\DownloadCurl\Task\DownloadTask;
 trait DownloadCurlTaskLoader
 {
     /**
+     * @param array<string, mixed> $options
+     * @phpstan-param taskDownloadCurlOptions $options
+     *
      * @return \Sweetchuck\Robo\DownloadCurl\Task\DownloadTask|\Robo\Collection\CollectionBuilder
      */
     protected function taskDownloadCurl(array $options = []): CollectionBuilder
