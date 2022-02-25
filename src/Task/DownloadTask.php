@@ -4,6 +4,8 @@ declare(strict_types = 1);
 
 namespace Sweetchuck\Robo\DownloadCurl\Task;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Robo\Contract\BuilderAwareInterface;
 use Robo\Result;
 use Robo\Task\BaseTask;
@@ -15,11 +17,6 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 {
     use TaskAccessor;
     use HashTaskLoader;
-
-    /**
-     * @var \Psr\Log\LoggerInterface
-     */
-    protected $logger;
 
     protected string $taskName = 'cURL download';
 
@@ -57,7 +54,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     }
 
     /**
-     * @param null|resource|string
+     * @param null|resource|string $value
      *
      * @return $this
      */
@@ -89,14 +86,24 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     // endregion
 
     // region hashOptions
+    /**
+     * @var array
+     * @phpstan-var roboDownloadCurlHashOptions
+     */
     protected array $hashOptions = [];
 
+    /**
+     * @phpstan-return roboDownloadCurlHashOptions
+     */
     public function getHashOptions(): array
     {
         return $this->hashOptions;
     }
 
     /**
+     * @param array $hashOptions
+     * @phpstan-param roboDownloadCurlHashOptions $hashOptions
+     *
      * @return $this
      */
     public function setHashOptions(array $hashOptions)
@@ -108,8 +115,14 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     // endregion
 
     // region curlOptions
+    /**
+     * @var array<int, mixed>
+     */
     protected array $curlOptions = [];
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getDefaultCurlOptions(): array
     {
         return [
@@ -121,12 +134,17 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         ];
     }
 
+    /**
+     * @return array<int, mixed>
+     */
     public function getCurlOptions(): array
     {
         return $this->curlOptions;
     }
 
     /**
+     * @param array<int, mixed> $curlOptions
+     *
      * @return $this
      */
     public function setCurlOptions(array $curlOptions)
@@ -136,6 +154,11 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         return $this;
     }
 
+    /**
+     * @param array<int, mixed> $curlOptions
+     *
+     * @return $this
+     */
     public function addCurlOptions(array $curlOptions)
     {
         foreach ($curlOptions as $key => $value) {
@@ -147,8 +170,16 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     // endregion
 
     // region skipDownloadIf
+    /**
+     * @var string
+     * @phpstan-var roboDownloadCurlSkipDownloadIfEnum
+     */
     protected string $skipDownloadIf = 'checksumMatches';
 
+    /**
+     * @return string
+     * @phpstan-return roboDownloadCurlSkipDownloadIfEnum
+     */
     public function getSkipDownloadIf(): string
     {
         return $this->skipDownloadIf;
@@ -157,6 +188,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     /**
      * @param string $skipDownloadIf
      *   Allowed values: exists, checksumMatches, never.
+     * @phpstan-param roboDownloadCurlSkipDownloadIfEnum $skipDownloadIf
      *
      * @return $this
      */
@@ -199,6 +231,9 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     // endregion
 
     /**
+     * @param array<string, mixed> $options
+     * @phpstan-param taskDownloadCurlOptions $options
+     *
      * @return $this
      */
     public function setOptions(array $options)
@@ -237,8 +272,15 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         return $this;
     }
 
+    protected function getLogger(): LoggerInterface
+    {
+        return $this->logger ?: new NullLogger();
+    }
+
     /**
      * {@inheritdoc}
+     *
+     * @return \Robo\Result<string, mixed>
      */
     public function run()
     {
@@ -272,7 +314,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         if ($dstDir && !file_exists($dstDir)) {
             $result = mkdir($dstDir, 0777 - umask(), true);
             if (!$result) {
-                $this->logger->error(
+                $this->getLogger()->error(
                     'directory <info>{dir}</info> could not be created',
                     [
                         'dir' => $dstDir,
@@ -284,6 +326,9 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         return $this;
     }
 
+    /**
+     * @return \Robo\Result<string, mixed>
+     */
     protected function runDownload(): Result
     {
         $dst = $this->getDestination();
@@ -301,7 +346,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
                 sprintf(
                     'destination %s is already exists and matches to %s:%s',
                     $fileName,
-                    $hashOptions['hashAlgorithm'],
+                    $hashOptions['hashAlgorithm'] ?? '',
                     $expectedChecksum,
                 ),
             );
@@ -309,7 +354,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
         $isDstResource = is_resource($dst);
         $isDstExists = !$isDstResource && file_exists($dst);
-        $dstHandler = $isDstResource ? $dst : fopen($dst, 'w+');
+        $dstHandler = $isDstResource ? $dst : fopen((string) $dst, 'w+');
         if (!$isDstResource && !$dstHandler) {
             return Result::error($this, "Could not open target file '$dst'");
         }
@@ -354,6 +399,15 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         return Result::success($this, "URI $uri downloaded to $dstFileName");
     }
 
+    /**
+     * @param string|bool $result
+     * @param array{
+     *     scheme: string,
+     *     http_code?: int,
+     * } $details
+     *
+     * @return bool
+     */
     protected function isSuccess($result, array $details): bool
     {
         if ($result === false) {
@@ -374,12 +428,17 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param string $text
+     * @param null|array<string, mixed> $context
+     *
+     * @return void
      */
     protected function printTaskInfo($text, $context = null)
     {
         parent::printTaskInfo(
             $text ?: $this->getTaskInfoPattern(),
-            $context ?: $this->getTaskInfoContext()
+            $context ?: $this->getTaskInfoContext(),
         );
     }
 
@@ -388,6 +447,9 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         return 'Downloading <info>"{uri}"</info> to <info>"{dst}"</info>';
     }
 
+    /**
+     * @return null|array<string, mixed>
+     */
     protected function getTaskInfoContext(): ?array
     {
         return null;
@@ -395,6 +457,10 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param null|array<string, mixed> $context
+     *
+     * @return array<string, mixed>
      */
     protected function getTaskContext($context = null)
     {
@@ -417,18 +483,19 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
             return false;
         }
 
-        $dst = $this->getDestination();
-        $isDstExists = file_exists($dst);
-        if ($skipDownloadIf === 'exists') {
-            return $isDstExists;
-        }
+        $logger = $this->getLogger();
 
-        $logger = $this->logger;
+        $dst = $this->getDestination();
         if (is_resource($dst)) {
             // @todo Actually it is possible.
             $logger->notice('Pre-download checksum validation is skipped. The given destination is a resource.');
 
             return false;
+        }
+
+        $isDstExists = file_exists($dst);
+        if ($skipDownloadIf === 'exists') {
+            return $isDstExists;
         }
 
         if (!$isDstExists) {
@@ -466,7 +533,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
     protected function postDownloadCheck(): bool
     {
-        $logger = $this->logger;
+        $logger = $this->getLogger();
         $dst = $this->getDestination();
         if (is_resource($dst)) {
             // @todo Actually it is possible.

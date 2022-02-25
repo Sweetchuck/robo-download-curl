@@ -12,6 +12,9 @@ use Sweetchuck\Robo\DownloadCurl\Tests\Helper\RoboFiles\RoboFileAcceptance;
 class DownloadCurlTaskCest
 {
 
+    /**
+     * @return array<int, mixed>
+     */
     protected function downloadCurlCases(): array
     {
         $dstPrefix = 'vfs://root/downloadCurl';
@@ -56,9 +59,11 @@ class DownloadCurlTaskCest
     }
 
     /**
+     * @param \Codeception\Example<string, mixed> $example
+     *
      * @dataProvider downloadCurlCases
      */
-    public function downloadCurl(AcceptanceTester $tester, Example $example)
+    public function downloadCurl(AcceptanceTester $tester, Example $example): void
     {
         $vfs = vfsStream::setup(
             'root',
