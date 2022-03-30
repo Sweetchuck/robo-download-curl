@@ -18,7 +18,7 @@ class DownloadCurlTaskCest
     protected function downloadCurlCases(): array
     {
         $dstPrefix = 'vfs://root/downloadCurl';
-        $uriSuccess = 'https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json';
+        $uriSuccess = 'https://file-examples.com/storage/fedc20bc2262440d5c8c9f3/2017/02/file_example_JSON_1kb.json';
         $uri404 = 'https://example.com/not-exists.json';
 
         return [
@@ -34,7 +34,7 @@ class DownloadCurlTaskCest
                 ]),
                 'cli' => [
                     'download:curl',
-                    'https://file-examples-com.github.io/uploads/2017/02/file_example_JSON_1kb.json',
+                    $uriSuccess,
                     'a/foo.json'
                 ],
             ],
@@ -90,9 +90,9 @@ class DownloadCurlTaskCest
         $stdOutput = $tester->getRoboTaskStdOutput($example['id']);
         $stdError = $tester->getRoboTaskStdError($example['id']);
 
-        $tester->assertSame($example['expectedExitCode'], $exitCode, 'exitCode');
-        $tester->assertSame($example['expectedStdOutput'], $stdOutput, 'stdOutput');
         $tester->assertSame($example['expectedStdError'], $stdError, 'stdError');
+        $tester->assertSame($example['expectedStdOutput'], $stdOutput, 'stdOutput');
+        $tester->assertSame($example['expectedExitCode'], $exitCode, 'exitCode');
 
         if ($example['expectedExitCode'] === 0) {
             $tester->assertDirectoryExists(dirname($dst), 'MY dir exists');
