@@ -370,12 +370,15 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
             curl_setopt($curlHandler, $key, $value);
         }
         $result = curl_exec($curlHandler);
-        fclose($dstHandler);
+        if ($dstHandler) {
+            fclose($dstHandler);
+        }
+
         // @todo Support for \CURLOPT_RETURNTRANSFER.
         $details = curl_getinfo($curlHandler);
         curl_close($curlHandler);
 
-        if (!$this->isSuccess($result, $details)) {
+        if (!$details || !$this->isSuccess($result, $details)) {
             if (!$isDstResource && !$isDstExists) {
                 unlink($this->destination);
             }
@@ -402,7 +405,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     /**
      * @param string|bool $result
      * @param array{
-     *     scheme: string,
+     *     scheme?: string,
      *     http_code?: int,
      * } $details
      *
@@ -414,7 +417,8 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
             return false;
         }
 
-        if ($details['scheme'] === 'HTTP' || $details['scheme'] === 'HTTPS') {
+        $scheme = $details['scheme'] ?? '';
+        if ($scheme === 'HTTP' || $scheme === 'HTTPS') {
             return ($details['http_code'] ?? 0) === 200;
         }
 

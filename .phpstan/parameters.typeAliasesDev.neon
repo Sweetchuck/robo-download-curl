@@ -2,8 +2,8 @@ parameters:
     typeAliases:
         devRoboDownloadCurlPhpExecutable: '''
             array{
-                available: bool,
-                envVar: array<string, string>,
+                enabled: bool,
                 command: string,
+                envVars?: array<string, null|string>,
             }
         '''

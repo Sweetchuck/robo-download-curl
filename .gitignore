@@ -8,6 +8,10 @@
 
 /.git-hooks.local
 
+/phpcs.xml
+
+/phpstan.neon
+
 /robo.yml
 /RoboFileAcceptance.php
 /RoboFileLocal.php
