@@ -1,0 +1,8 @@
+parameters:
+    paths:
+        - ../src/
+        - ../tests/
+        - ../RoboFile.php
+    excludePaths:
+        - ../tests/_log/
+        - ../tests/_support/_generated/

@@ -14,24 +14,27 @@ orbs:
 
 executors:
     php_min:
+        resource_class: 'small'
         environment:
             <<: *env_common
             <<: *env_composer
         docker:
             -
                 name: 'main'
-                image: 'circleci/php:7.4'
+                image: 'cimg/php:7.4'
 
     php_plus1:
+        resource_class: 'small'
         environment:
             <<: *env_common
             <<: *env_composer
         docker:
             -
                 name: 'main'
-                image: 'circleci/php:8.0'
+                image: 'cimg/php:8.0'
 
     php_plus2:
+        resource_class: 'small'
         environment:
             <<: *env_common
             <<: *env_composer
@@ -39,6 +42,16 @@ executors:
             -
                 name: 'main'
                 image: 'cimg/php:8.1'
+
+    php_plus3:
+        resource_class: 'small'
+        environment:
+            <<: *env_common
+            <<: *env_composer
+        docker:
+            -
+                name: 'main'
+                image: 'cimg/php:8.2'
 
 commands:
     php_extension_pecl_install:
@@ -239,7 +252,7 @@ commands:
                 run:
                     name: 'Run linters'
                     command: |
-                        "$(composer config bin-dir)/robo" -vvv lint
+                        "$(composer config bin-dir)/robo" -vv --ansi lint
 
     test:
         description: 'Run tests'
@@ -248,7 +261,7 @@ commands:
                 run:
                     name: 'Codeception - unit'
                     command: |
-                        "$(composer config bin-dir)/robo" test unit
+                        "$(composer config bin-dir)/robo" -vv --ansi test unit
             -
                 codecov/upload:
                     flags: 'unit'
@@ -257,7 +270,7 @@ commands:
                 run:
                     name: 'Codeception - acceptance'
                     command: |
-                        "$(composer config bin-dir)/robo" test acceptance
+                        "$(composer config bin-dir)/robo" -vv --ansi test acceptance
             -
                 codecov/upload:
                     flags: 'acceptance'
@@ -274,14 +287,12 @@ commands:
 jobs:
     build:
         executor: 'php_min'
-        working_directory: '~/repo'
         steps:
-            - 'php_extension_install'
             - 'checkout'
+            - 'php_extension_install'
             - 'composer_install'
     lint:
         executor: 'php_min'
-        working_directory: '~/repo'
         steps:
             - 'checkout'
             - 'composer_install'
@@ -291,10 +302,9 @@ jobs:
             executor:
                 type: 'string'
         executor: '<<parameters.executor>>'
-        working_directory: '~/repo'
         steps:
-            - 'php_extension_install'
             - 'checkout'
+            - 'php_extension_install'
             - 'composer_install'
             - 'test'
 
@@ -318,3 +328,4 @@ workflows:
                                 - 'php_min'
                                 - 'php_plus1'
                                 - 'php_plus2'
+                                - 'php_plus3'
