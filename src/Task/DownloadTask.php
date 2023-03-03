@@ -28,10 +28,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         return $this->uri;
     }
 
-    /**
-     * @return $this
-     */
-    public function setUri(string $value)
+    public function setUri(string $value): static
     {
         $this->uri = $value;
 
@@ -55,10 +52,8 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
     /**
      * @param null|resource|string $value
-     *
-     * @return $this
      */
-    public function setDestination($value)
+    public function setDestination($value): static
     {
         $this->destination = $value;
 
@@ -74,10 +69,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         return $this->hashChecksum;
     }
 
-    /**
-     * @return $this
-     */
-    public function setHashChecksum(string $hashChecksum)
+    public function setHashChecksum(string $hashChecksum): static
     {
         $this->hashChecksum = $hashChecksum;
 
@@ -103,10 +95,8 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     /**
      * @param array $hashOptions
      * @phpstan-param roboDownloadCurlHashOptions $hashOptions
-     *
-     * @return $this
      */
-    public function setHashOptions(array $hashOptions)
+    public function setHashOptions(array $hashOptions): static
     {
         $this->hashOptions = $hashOptions;
 
@@ -144,10 +134,8 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
     /**
      * @param array<int, mixed> $curlOptions
-     *
-     * @return $this
      */
-    public function setCurlOptions(array $curlOptions)
+    public function setCurlOptions(array $curlOptions): static
     {
         $this->curlOptions = $curlOptions;
 
@@ -156,10 +144,8 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
     /**
      * @param array<int, mixed> $curlOptions
-     *
-     * @return $this
      */
-    public function addCurlOptions(array $curlOptions)
+    public function addCurlOptions(array $curlOptions): static
     {
         foreach ($curlOptions as $key => $value) {
             $this->curlOptions[$key] = $value;
@@ -171,13 +157,11 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
 
     // region skipDownloadIf
     /**
-     * @var string
      * @phpstan-var roboDownloadCurlSkipDownloadIfEnum
      */
     protected string $skipDownloadIf = 'checksumMatches';
 
     /**
-     * @return string
      * @phpstan-return roboDownloadCurlSkipDownloadIfEnum
      */
     public function getSkipDownloadIf(): string
@@ -189,40 +173,29 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
      * @param string $skipDownloadIf
      *   Allowed values: exists, checksumMatches, never.
      * @phpstan-param roboDownloadCurlSkipDownloadIfEnum $skipDownloadIf
-     *
-     * @return $this
      */
-    public function setSkipDownloadIf(string $skipDownloadIf)
+    public function setSkipDownloadIf(string $skipDownloadIf): static
     {
         $this->skipDownloadIf = $skipDownloadIf;
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function skipDownloadIfExists()
+    public function skipDownloadIfExists(): static
     {
         $this->skipDownloadIf = 'exists';
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function skipDownloadIfChecksumMatches()
+    public function skipDownloadIfChecksumMatches(): static
     {
         $this->skipDownloadIf = 'checksumMatches';
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    public function skipDownloadIfNever()
+    public function skipDownloadIfNever(): static
     {
         $this->skipDownloadIf = 'never';
 
@@ -233,10 +206,8 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     /**
      * @param array<string, mixed> $options
      * @phpstan-param taskDownloadCurlOptions $options
-     *
-     * @return $this
      */
-    public function setOptions(array $options)
+    public function setOptions(array $options): static
     {
         if (array_key_exists('uri', $options)) {
             $this->setUri($options['uri']);
@@ -290,20 +261,14 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
             ->runDownload();
     }
 
-    /**
-     * @return $this
-     */
-    protected function runHeader()
+    protected function runHeader(): static
     {
         $this->printTaskInfo('');
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    protected function runPrepareDstDir()
+    protected function runPrepareDstDir(): static
     {
         $dst = $this->getDestination();
         if (is_resource($dst) || $dst === null || $dst === '') {
@@ -403,15 +368,12 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
     }
 
     /**
-     * @param string|bool $result
-     * @param array{
+     * @phpstan-param array{
      *     scheme?: string,
      *     http_code?: int,
      * } $details
-     *
-     * @return bool
      */
-    protected function isSuccess($result, array $details): bool
+    protected function isSuccess(string|bool $result, array $details): bool
     {
         if ($result === false) {
             return false;

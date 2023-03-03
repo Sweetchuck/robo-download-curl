@@ -87,7 +87,6 @@ class RoboFile extends Tasks implements LoggerAwareInterface, ConfigAwareInterfa
      */
     public function __construct()
     {
-        putenv('COMPOSER_DISABLE_XDEBUG_WARN=1');
         $this
             ->initShell()
             ->initComposerInfo()
@@ -104,6 +103,7 @@ class RoboFile extends Tasks implements LoggerAwareInterface, ConfigAwareInterfa
         if (!($container instanceof LeagueContainer)) {
             return;
         }
+
         foreach (BaseReporter::getServices() as $name => $class) {
             if ($container->has($name)) {
                 continue;
@@ -182,20 +182,14 @@ class RoboFile extends Tasks implements LoggerAwareInterface, ConfigAwareInterfa
         return ($output instanceof ConsoleOutputInterface) ? $output->getErrorOutput() : $output;
     }
 
-    /**
-     * @return $this
-     */
-    protected function initEnvVarNamePrefix()
+    protected function initEnvVarNamePrefix(): static
     {
         $this->envVarNamePrefix = strtoupper(str_replace('-', '_', $this->packageName));
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    protected function initEnvironmentTypeAndName()
+    protected function initEnvironmentTypeAndName(): static
     {
         $this->environmentType = (string) getenv($this->getEnvVarName('environment_type'));
         $this->environmentName = (string) getenv($this->getEnvVarName('environment_name'));
@@ -238,20 +232,14 @@ class RoboFile extends Tasks implements LoggerAwareInterface, ConfigAwareInterfa
         return "{$this->envVarNamePrefix}_" . strtoupper($name);
     }
 
-    /**
-     * @return $this
-     */
-    protected function initShell()
+    protected function initShell(): static
     {
         $this->shell = getenv('SHELL') ?: '/bin/bash';
 
         return $this;
     }
 
-    /**
-     * @return $this
-     */
-    protected function initComposerInfo()
+    protected function initComposerInfo(): static
     {
         if ($this->composerInfo) {
             return $this;
@@ -283,10 +271,7 @@ class RoboFile extends Tasks implements LoggerAwareInterface, ConfigAwareInterfa
         return $this->taskComposerValidate($composerExecutable);
     }
 
-    /**
-     * @return $this
-     */
-    protected function initCodeceptionInfo()
+    protected function initCodeceptionInfo(): static
     {
         if ($this->codeceptionInfo) {
             return $this;
@@ -295,8 +280,9 @@ class RoboFile extends Tasks implements LoggerAwareInterface, ConfigAwareInterfa
         $default = [
             'paths' => [
                 'tests' => 'tests',
-                'log' => 'tests/_log',
                 'envs' => 'tests/_envs',
+                'log' => 'tests/_log',
+                'output' => 'tests/_log',
             ],
         ];
         $dist = is_readable('codeception.dist.yml') ?

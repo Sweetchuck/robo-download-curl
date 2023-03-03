@@ -2,6 +2,8 @@
 
 namespace Sweetchuck\Robo\DownloadCurl\Tests\Helper;
 
-class Acceptance extends \Codeception\Module
+use Codeception\Module;
+
+class Acceptance extends Module
 {
 }

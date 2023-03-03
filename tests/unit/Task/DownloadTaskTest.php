@@ -10,10 +10,7 @@ class DownloadTaskTest extends TaskTestBase
 {
     protected UnitTester $tester;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function initTask()
+    protected function initTask(): static
     {
         $this->task = $this->taskBuilder->taskDownloadCurl();
 

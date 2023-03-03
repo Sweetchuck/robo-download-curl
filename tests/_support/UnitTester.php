@@ -1,5 +1,8 @@
 <?php
+
 namespace Sweetchuck\Robo\DownloadCurl\Tests;
+
+use Codeception\Actor;
 
 /**
  * Inherited Methods
@@ -16,11 +19,7 @@ namespace Sweetchuck\Robo\DownloadCurl\Tests;
  *
  * @SuppressWarnings(PHPMD)
 */
-class UnitTester extends \Codeception\Actor
+class UnitTester extends Actor
 {
     use _generated\UnitTesterActions;
-
-    /**
-     * Define custom actions here
-     */
 }

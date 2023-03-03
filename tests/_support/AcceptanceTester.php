@@ -2,6 +2,8 @@
 
 namespace Sweetchuck\Robo\DownloadCurl\Tests;
 
+use Codeception\Actor;
+
 /**
  * Inherited Methods
  * @method void wantToTest($text)
@@ -17,7 +19,7 @@ namespace Sweetchuck\Robo\DownloadCurl\Tests;
  *
  * @SuppressWarnings(PHPMD)
 */
-class AcceptanceTester extends \Codeception\Actor
+class AcceptanceTester extends Actor
 {
     use _generated\AcceptanceTesterActions;
 }
