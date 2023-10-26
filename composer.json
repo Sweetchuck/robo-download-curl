@@ -53,7 +53,6 @@
         "sweetchuck/robo-phpcs": "3.x-dev",
         "sweetchuck/robo-phpmd": "3.x-dev",
         "sweetchuck/robo-phpstan": "2.x-dev",
-        "sweetchuck/utils": "1.x-dev",
         "symfony/debug": "^4.4 || ^5.0 || ^6.0",
         "symfony/error-handler": "^5.0 || ^6.0",
         "symfony/finder": "^5.0 || ^6.0",
