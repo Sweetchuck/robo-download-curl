@@ -18,7 +18,7 @@ class DownloadCurlTaskCest
     protected function downloadCurlCases(): array
     {
         $dstPrefix = 'vfs://root/downloadCurl';
-        $uriSuccess = 'https://file-examples.com/wp-content/uploads/2017/02/file_example_JSON_1kb.json';
+        $uriSuccess = 'https://file-examples.com/storage/fe1134defc6538ed39b8efa/2017/02/file_example_JSON_1kb.json';
         $uri404 = 'https://example.com/not-exists.json';
 
         return [
