@@ -4,8 +4,14 @@ declare(strict_types = 1);
 
 namespace Sweetchuck\Robo\DownloadCurl\Tests\Unit\Task;
 
+use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\Attributes\CoversTrait;
+use Sweetchuck\Robo\DownloadCurl\DownloadCurlTaskLoader;
+use Sweetchuck\Robo\DownloadCurl\Task\DownloadTask;
 use Sweetchuck\Robo\DownloadCurl\Tests\UnitTester;
 
+#[CoversClass(DownloadTask::class)]
+#[CoversTrait(DownloadCurlTaskLoader::class)]
 class DownloadTaskTest extends TaskTestBase
 {
     protected UnitTester $tester;

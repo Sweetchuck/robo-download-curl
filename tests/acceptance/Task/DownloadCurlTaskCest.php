@@ -4,6 +4,7 @@ declare(strict_types = 1);
 
 namespace Sweetchuck\Robo\DownloadCurl\Tests\Acceptance\Task;
 
+use Codeception\Attribute\DataProvider;
 use Codeception\Example;
 use org\bovigo\vfs\vfsStream;
 use Sweetchuck\Robo\DownloadCurl\Tests\AcceptanceTester;
@@ -13,16 +14,16 @@ class DownloadCurlTaskCest
 {
 
     /**
-     * @return array<int, mixed>
+     * @return array<string, mixed>
      */
-    protected function downloadCurlCases(): array
+    public static function downloadCurlCases(): array
     {
         $dstPrefix = 'vfs://root/downloadCurl';
         $uriSuccess = 'https://file-examples.com/wp-content/storage/2017/02/file_example_JSON_1kb.json';
-        $uri404 = 'https://example.com/not-exists.json';
+        $uri404 = 'https://ecb0548d9fc84c9f96905a4b352d13f3.com/not-exists.json';
 
         return [
-            [
+            'download:curl success' => [
                 'id' => 'download:curl success',
                 'expectedExitCode' => 0,
                 'expectedStdOutput' => '',
@@ -38,12 +39,12 @@ class DownloadCurlTaskCest
                     'a/foo.json'
                 ],
             ],
-            [
+            'download:curl fail' => [
                 'id' => 'download:curl fail',
                 'expectedExitCode' => 1,
                 'expectedStdOutput' => '',
                 'expectedStdError' => implode(PHP_EOL, [
-                    " [cURL download] Downloading \"https://example.com/not-exists.json\" to \"$dstPrefix/a/foo.json\"",
+                    " [cURL download] Downloading \"$uri404\" to \"$dstPrefix/a/foo.json\"",
                     ' [notice] Pre-download checksum validation is skipped. The destination is not exists.',
                     " [Sweetchuck\Robo\DownloadCurl\Task\DownloadTask]  Could not download '$uri404' ",
                     " [Sweetchuck\Robo\DownloadCurl\Task\DownloadTask]  Exit code 1 ",
@@ -51,7 +52,7 @@ class DownloadCurlTaskCest
                 ]),
                 'cli' => [
                     'download:curl',
-                    'https://example.com/not-exists.json',
+                    $uri404,
                     'a/foo.json'
                 ],
             ],
@@ -60,9 +61,8 @@ class DownloadCurlTaskCest
 
     /**
      * @param \Codeception\Example<string, mixed> $example
-     *
-     * @dataProvider downloadCurlCases
      */
+    #[DataProvider('downloadCurlCases')]
     public function downloadCurl(AcceptanceTester $tester, Example $example): void
     {
         $vfs = vfsStream::setup(
