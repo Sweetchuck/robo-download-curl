@@ -275,7 +275,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
             return $this;
         }
 
-        $dstDir = dirname($dst);
+        $dstDir = dirname((string) $dst);
         if ($dstDir && !file_exists($dstDir)) {
             $result = mkdir($dstDir, 0777 - umask(), true);
             if (!$result) {
@@ -318,7 +318,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         }
 
         $isDstResource = is_resource($dst);
-        $isDstExists = !$isDstResource && file_exists($dst);
+        $isDstExists = !$isDstResource && file_exists((string) $dst);
         $dstHandler = $isDstResource ? $dst : fopen((string) $dst, 'w+');
         if (!$isDstResource && !$dstHandler) {
             return Result::error($this, "Could not open target file '$dst'");
@@ -452,6 +452,12 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
         $logger = $this->getLogger();
 
         $dst = $this->getDestination();
+        if ($dst === null) {
+            $logger->notice('Pre-download checksum validation is skipped. The destination is not set.');
+
+            return false;
+        }
+
         if (is_resource($dst)) {
             // @todo Actually it is possible.
             $logger->notice('Pre-download checksum validation is skipped. The given destination is a resource.');
@@ -459,7 +465,7 @@ class DownloadTask extends BaseTask implements BuilderAwareInterface
             return false;
         }
 
-        $isDstExists = file_exists($dst);
+        $isDstExists = file_exists((string) $dst);
         if ($skipDownloadIf === 'exists') {
             return $isDstExists;
         }
